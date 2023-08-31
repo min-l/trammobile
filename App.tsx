@@ -56,6 +56,24 @@ function getLength(path: Array<string>) {
   return rLength;
 }
 
+function getColour(c:boolean){
+  switch(c) {
+    case true:
+      return 'green';
+    case false:
+      return 'orange';
+  }
+}
+
+function getText(c:boolean) {
+  switch(c) {
+    case true:
+      return 'Connected';
+    case false:
+      return 'Can\'t connect to server.';
+  }
+}
+
 function getPosition(tram: any) {
   let output:StyleProp<ViewStyle> = {
     position:'absolute',
@@ -136,15 +154,18 @@ function getPosition(tram: any) {
 
 const App = () => {
   const [trams, setTrams] = useState([]);
+  const [connected, setConnected] = useState(true);
   useEffect(() => {
     setInterval(() => {
       fetch('http://3.10.246.250:3000/active')
       .then((res) => res.json())
       .then((data) => {
         setTrams(data);
+        setConnected(true);
         console.log('data fetched successfully')
       }) 
       .catch((err) => {
+        setConnected(false);
         console.log(err.message);
       });
     },5000);
@@ -153,6 +174,13 @@ const App = () => {
 
   return (
     <SafeAreaView style={{backgroundColor: '#FFFFFF'}}>
+      <View style={{
+        backgroundColor: getColour(connected),
+        width: '100%',
+        height: 20
+      }}>
+        <Text style={{textAlign: 'center'}}>{getText(connected)}</Text>
+      </View>
       <ScrollView>
         <Text style={{color:'#000000'}}>{windowDimensions.height},{windowDimensions.width},{windowDimensions.scale}</Text>
         <Mapsvg width='100%'/>
