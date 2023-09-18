@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Text, View, ScrollView, SafeAreaView, StyleSheet, Dimensions, FlatList, StyleProp, ViewStyle, VirtualizedList} from 'react-native';
 import Svg, {Line, Path, SvgUri, SvgXml} from 'react-native-svg';
-import Mapsvg from './mintytram2.svg';
+import Mapsvg from './mintytram2b.svg';
 import Tramicon from './tramicon.svg';
 import { err } from 'react-native-svg/lib/typescript/xml';
 
@@ -21,9 +21,9 @@ type Tram = {
 
 const windowDimensions = Dimensions.get('window');
 const scaling = {
-  width: 4,
-  height: 4,
-  woffset: -1.5,
+  width: windowDimensions.width/100,
+  height: windowDimensions.width/100,
+  woffset: -7.5,
   hoffset: 12.5
 };
 
@@ -183,7 +183,7 @@ const App = () => {
       </View>
       <ScrollView>
         <Text style={{color:'#000000'}}>{windowDimensions.height},{windowDimensions.width},{windowDimensions.scale}</Text>
-        <Mapsvg width='100%'/>
+        <Mapsvg width={windowDimensions.width} height={windowDimensions.width*6}/>
         {trams.map((item, index) => <Tramicon key={index} width={15} height={15} style={getPosition(item)}/>)}
         {/*<Text style={{color:'black'}}>{JSON.stringify(trams)}</Text>*/}
       </ScrollView>
