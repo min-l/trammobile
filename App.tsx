@@ -3,6 +3,8 @@ import {Text, View, ScrollView, SafeAreaView, StyleSheet, Dimensions, FlatList, 
 import Svg, {Line, Path, SvgUri, SvgXml} from 'react-native-svg';
 import Mapsvg from './mintytram2b.svg';
 import Tramicon from './tramicon.svg';
+import Tramnorth from './tramicon-north.svg';
+import Tramsouth from './tramicon-south.svg';
 import { err } from 'react-native-svg/lib/typescript/xml';
 
 const map = require('./coords.json');
@@ -71,6 +73,29 @@ function getText(c:boolean) {
       return 'Connected';
     case false:
       return 'Can\'t connect to server.';
+  }
+}
+
+function getDirection(tram: any) {
+  // 0 north
+  // 1 south
+  // 2 other
+  let path:Array<string>;
+  try {
+    path = map[tram.departed][tram.predictNext];
+    if (path == undefined) {
+      path = map[tram.predictNext][tram.departed];
+      if (path == undefined) {
+        return 2;
+      } else {
+        return 0;
+      }
+    } else {
+      return 1;
+    }
+    
+  } catch {
+    return 2;
   }
 }
 
@@ -151,6 +176,16 @@ function getPosition(tram: any) {
   return output;
 }
 
+function Tramout(tram: any, index: number) {
+  switch (getDirection(tram)) {
+    case 0:
+      return <Tramnorth key={index} width={15} height={15} style={getPosition(tram)}/>
+    case 1:
+      return <Tramsouth key={index} width={15} height={15} style={getPosition(tram)}/>
+    case 2:
+      return <Tramicon key={index} width={15} height={15} style={getPosition(tram)}/>
+  }
+}
 
 const App = () => {
   const [trams, setTrams] = useState([]);
@@ -184,7 +219,7 @@ const App = () => {
       <ScrollView>
         <Text style={{color:'#000000'}}>{windowDimensions.height},{windowDimensions.width},{windowDimensions.scale}</Text>
         <Mapsvg width={windowDimensions.width} height={windowDimensions.width*6}/>
-        {trams.map((item, index) => <Tramicon key={index} width={15} height={15} style={getPosition(item)}/>)}
+        {trams.map((item, index) => Tramout(item,index))}
         {/*<Text style={{color:'black'}}>{JSON.stringify(trams)}</Text>*/}
       </ScrollView>
     </SafeAreaView>
